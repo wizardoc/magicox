@@ -12,26 +12,38 @@ export class Logger {
 
   @Level(LoggerLevel.WARN)
   warn(...infos: any[]) {
-    console.warn(Chalk.yellow("warning"), ...infos);
+    console.warn(Chalk.yellow("warning", ...infos));
   }
 
   @Level(LoggerLevel.PANIC)
-  panic() {}
+  panic(...infos: any[]) {
+    console.error(Chalk.bgRed.white("panic"), ...infos);
+  }
 
   @Level(LoggerLevel.INFO)
-  tip() {}
+  tip(...infos: any[]) {
+    console.info(Chalk.white("tip", ...infos));
+  }
 
   @Level(LoggerLevel.INFO)
-  success() {}
+  success(...infos: any[]) {
+    console.info(Chalk.green("success", ...infos));
+  }
 
   @Level(LoggerLevel.INFO)
-  info() {}
+  info(...infos: any[]) {
+    console.info(Chalk.blue("info", ...infos));
+  }
 
   @Level(LoggerLevel.DEBUG)
-  debug() {}
+  debug(...infos: any[]) {
+    console.info(Chalk.gray("debug", ...infos));
+  }
 
   @Level(LoggerLevel.ERROR)
-  error() {}
+  error(...infos: any[]) {
+    console.error(Chalk.red("error", ...infos));
+  }
 }
 
 export const logger = new Logger();

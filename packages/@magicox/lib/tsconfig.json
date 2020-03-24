@@ -6,6 +6,7 @@
     "target": "es6",
     "strict": true,
     "noImplicitAny": true,
+    "declaration": true,
     "experimentalDecorators": true
   },
   "include": ["src/**/*"],

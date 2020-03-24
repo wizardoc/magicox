@@ -28,7 +28,7 @@ export function Level(level: LoggerLevel): MethodDecorator {
         return;
       }
 
-      descriptor.value.apply(that, ...infos);
+      descriptor.value.call(that, ...infos);
     }
   });
 }

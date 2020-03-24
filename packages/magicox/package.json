@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "bin": {
-    "magicox": "dist/cli.js"
+    "magicox": "dist/src/cli.js"
   },
   "license": "MIT",
   "dependencies": {

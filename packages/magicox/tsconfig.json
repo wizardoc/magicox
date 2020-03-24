@@ -5,7 +5,9 @@
     "module": "commonjs",
     "target": "es6",
     "strict": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules/**"]
