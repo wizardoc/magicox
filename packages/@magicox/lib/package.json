@@ -1,0 +1,9 @@
+{
+  "name": "@magicox/lib",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^3.0.0"
+  }
+}

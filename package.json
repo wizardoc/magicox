@@ -1,6 +1,20 @@
 {
-  "name": "magicox",
+  "name": "magicox-packages",
+  "private": true,
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "bootstrap": "lerna bootstrap"
+  },
+  "devDependencies": {
+    "lerna": "^3.20.2",
+    "tslib": "^1.11.1",
+    "typescript": "^3.8.3"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/**/*"
+    ]
+  }
 }

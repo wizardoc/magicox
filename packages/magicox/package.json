@@ -1,0 +1,13 @@
+{
+  "name": "magicox",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "bin": {
+    "magicox": "dist/cli.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@magicox/lib": "^1.0.0",
+    "cac": "^6.5.8"
+  }
+}

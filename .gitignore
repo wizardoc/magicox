@@ -1,0 +1,12 @@
+# deps
+node_modules
+
+# build
+dist
+
+# lock file
+package-lock.json
+
+# logs
+yarn-error.log
+lerna-debug.log
