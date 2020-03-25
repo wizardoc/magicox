@@ -11,7 +11,7 @@ export class ClientRenderer extends Renderer {
       hydrate(<App />, document.getElementById('root'))
     `
   }
-  writeEntry(): void {
-    writeInConfig(CLIENT_ENTRY_NAME, this.genEntry())
+  writeEntry(): Promise<void> {
+    return writeInConfig(CLIENT_ENTRY_NAME, this.genEntry())
   }
 }

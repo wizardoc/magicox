@@ -2,15 +2,15 @@ import FS from 'fs-extra'
 import { logger } from '@magicox/lib'
 import { ServerRenderer, ClientRenderer, Renderer } from '../renderer'
 
-export function createEntry(filename: string) {
+export async function createEntry(filename: string) {
   checkDevFileExist(filename)
 
-  persistEntry(new ServerRenderer(filename))
-  persistEntry(new ClientRenderer(filename))
+  await persistEntry(new ServerRenderer(filename))
+  await persistEntry(new ClientRenderer(filename))
 }
 
-function persistEntry(renderer: Renderer) {
-  renderer.writeEntry()
+function persistEntry(renderer: Renderer): Promise<void> {
+  return renderer.writeEntry()
 }
 
 // check the file whether is exist or not

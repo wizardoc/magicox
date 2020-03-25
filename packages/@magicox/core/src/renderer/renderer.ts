@@ -13,5 +13,5 @@ export abstract class Renderer {
   }
 
   abstract genEntry(): string
-  abstract writeEntry(): void
+  abstract writeEntry(): Promise<void>
 }

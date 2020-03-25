@@ -7,7 +7,7 @@ import { logger } from '@magicox/lib'
 import { Configuration } from 'webpack'
 
 export async function buildHandler(filename: string) {
-  createEntry(filename)
+  await createEntry(filename)
 
   const ClientWebpackConfig = await ClientWebpackConfigFactory()
   const ServerWebpackConfig = await ServerWebpackConfigFactory()
