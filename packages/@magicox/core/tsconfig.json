@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "module": "commonjs",
+    "target": "es6",
+    "strict": true,
+    "noImplicitAny": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "declaration": true
+    // "allowSyntheticDefaultImports": true
+  },
+  "include": ["src/**/*", "configs"],
+  "exclude": ["node_modules/**"]
+}
