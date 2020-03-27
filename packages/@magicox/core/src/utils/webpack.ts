@@ -10,17 +10,21 @@ export function webpackBuild(config: Configuration): Promise<Stats> {
         return
       }
 
-      const parsedStats = stats.toJson()
-
-      if (stats.hasWarnings()) {
-        logger.warn(parsedStats.warnings.toString())
-      }
-
-      if (stats.hasErrors()) {
-        logger.error(parsedStats.errors.toString())
-      }
+      handleStats(stats)
 
       resolve(stats)
     })
   )
+}
+
+export function handleStats(stats: Stats) {
+  const parsedStats = stats.toJson()
+
+  if (stats.hasWarnings()) {
+    logger.warn(parsedStats.warnings.toString())
+  }
+
+  if (stats.hasErrors()) {
+    logger.error(parsedStats.errors.toString())
+  }
 }

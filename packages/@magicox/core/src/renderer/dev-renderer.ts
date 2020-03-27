@@ -1,0 +1,137 @@
+import webpack, { Configuration, Compiler } from 'webpack'
+import { handleStats } from '../utils/webpack'
+import Path from 'path'
+import MFS from 'memory-fs'
+import { renderToString } from 'react-dom/server'
+import { devMiddleware, hotMiddleware } from 'koa-webpack-middleware'
+import { logger } from '@magicox/lib'
+import { Middleware } from 'koa'
+import { createElement } from 'react'
+
+type BuildedListener = (tpl: string, ssrContent: string) => void
+
+const memFs = new MFS()
+
+export class DevRenderer {
+  private _clientCompiler: Compiler
+  private _serverCompiler: Compiler
+  private _devMiddleware: Middleware
+  private _hotMiddleware: Middleware
+
+  private tpl: string | undefined
+  private ssrContent: string | undefined
+  private _isBuilding: Promise<void>
+  private buildSuccess: (() => void) | undefined
+
+  private static instance: DevRenderer | undefined
+
+  // private doBuildSuccess: (() => void) | undefined
+  // private building: Promise<void> | undefined
+
+  private constructor(
+    private clientWebpackConfig: Configuration,
+    private serverWebpackConfig: Configuration
+  ) {
+    this._clientCompiler = webpack(clientWebpackConfig)
+    this._serverCompiler = webpack(serverWebpackConfig)
+    this._devMiddleware = devMiddleware(this._clientCompiler, {
+      publicPath: this.clientWebpackConfig.output!.publicPath,
+      noInfo: true,
+    })
+    this._hotMiddleware = hotMiddleware(this._clientCompiler)
+
+    // init building promise
+    this._isBuilding = new Promise<void>(
+      resolve => (this.buildSuccess = resolve)
+    )
+
+    this._clientCompiler.plugin('done', () => {
+      try {
+        this.tpl = (this._devMiddleware as any).fileSystem.readFileSync(
+          Path.join(
+            this.clientWebpackConfig.output!.path as string,
+            'index.html'
+          ),
+          'utf-8'
+        )
+
+        logger.info('client builded!')
+
+        this.notify()
+      } catch (e) {
+        logger.error(e)
+      }
+    })
+
+    const { path, filename } = this.serverWebpackConfig.output!
+
+    this._serverCompiler.outputFileSystem = memFs
+    this._serverCompiler.watch({}, (err, stats) => {
+      if (err) {
+        logger.error(err)
+
+        return
+      }
+
+      handleStats(stats)
+
+      // read dist file in memory
+      const serverDistFile = memFs.readFileSync(
+        Path.join(path!, filename as string),
+        'utf-8'
+      )
+      const m = new (module.constructor as any)()
+
+      m._compile(serverDistFile, 'server-entry.js')
+
+      this.ssrContent = renderToString(createElement(m.exports.app))
+
+      logger.info('server builded!')
+
+      this.notify()
+    })
+  }
+
+  static createInstance(
+    clientWebpackConfig: Configuration,
+    serverWebpackConfig: Configuration
+  ) {
+    return (
+      DevRenderer.instance ??
+      (DevRenderer.instance = new DevRenderer(
+        clientWebpackConfig,
+        serverWebpackConfig
+      ))
+    )
+  }
+
+  get clientCompiler(): Compiler {
+    return this._clientCompiler
+  }
+
+  get serverCompiler(): Compiler {
+    return this._serverCompiler
+  }
+
+  get devMiddleware() {
+    return this._devMiddleware
+  }
+
+  get hotMiddleware() {
+    return this._hotMiddleware
+  }
+
+  isBuilding(): Promise<void> {
+    return this._isBuilding
+  }
+
+  buildAssets() {
+    return [this.tpl!, this.ssrContent!]
+  }
+
+  notify() {
+    if (this.tpl && this.ssrContent && this.buildSuccess) {
+      this.buildSuccess()
+    }
+  }
+}

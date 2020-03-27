@@ -8,8 +8,8 @@
     "noImplicitAny": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "declaration": true
-    // "allowSyntheticDefaultImports": true
+    "declaration": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": ["src/**/*", "configs"],
   "exclude": ["node_modules/**"]

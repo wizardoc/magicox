@@ -1,10 +1,9 @@
 import Path from 'path'
 import merge from 'webpack-merge'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
-import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import { baseWebpackConfig } from './webpack.config.base'
 import WebpackBar from 'webpackbar'
-import { getConfigPath, findRootPath, getDistPath } from '../utils'
+import { getConfigPath, getDistPath } from '../utils'
 import { Configuration } from 'webpack'
 
 export = async (): Promise<Configuration> =>

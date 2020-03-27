@@ -1,3 +1,5 @@
 export * from './renderer'
 export * from './client-renderer'
 export * from './server-renderer'
+export * from './template-renderer'
+export * from './dev-renderer'
