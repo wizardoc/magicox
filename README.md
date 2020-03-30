@@ -9,3 +9,6 @@ The Simple React SSR Framework.
   - [ ] port
   - [ ] template
   - [ ] entry point
+- [ ] docking router
+- [ ] prefetch data design
+- [ ] store support
