@@ -8,7 +8,9 @@ import { Configuration } from 'webpack'
 
 export = async (): Promise<Configuration> =>
   merge(baseWebpackConfig, {
-    entry: Path.join(await getConfigPath(), 'client-entry.js'),
+    entry: {
+      app: Path.join(await getConfigPath(), 'client-entry.js'),
+    },
 
     mode: 'development' as Configuration['mode'],
 

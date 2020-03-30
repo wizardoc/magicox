@@ -9,6 +9,12 @@ export class ClientRenderer extends Renderer {
       import App from '${this.entryModulePath}'
 
       hydrate(<App />, document.getElementById('root'))
+
+      if(module.hot) {
+        module.hot.accept("${this.entryModulePath}", () => {
+          hydrate(<App />, document.getElementById('root'))
+        })
+      }
     `
   }
   writeEntry(): Promise<void> {

@@ -20,19 +20,20 @@ export async function createApp() {
     await next()
   })
 
-  app.use((ctx, next) => {
-    devRenderer.devMiddleware(ctx, next)
-  })
+  app.use((ctx, next) => devRenderer.devMiddleware(ctx, next))
 
-  // app.use((ctx, next) => ctx.devRenderer.hotMiddleware(ctx, next))
+  app.use((ctx, next) => devRenderer.hotMiddleware(ctx, next))
 
   app.use(ctx => {
-    // ctx.set('Content-Type', 'text/html')
+    ctx.set('Content-Type', 'text/html')
 
     const [tpl, ssrContent] = devRenderer.buildAssets()
     const tplRenderer = TemplateRenderer.createRendererByTemplate(tpl)
 
-    ctx.body = tplRenderer.renderLabel(RenderLabel.CONTENT_OUTLET, ssrContent)
+    ctx.body = tplRenderer.renderLabel(
+      RenderLabel.CONTENT_OUTLET,
+      `<div id="root">${ssrContent}</div>`
+    )
   })
 
   return app

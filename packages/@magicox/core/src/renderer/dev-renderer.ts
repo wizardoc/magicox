@@ -1,4 +1,9 @@
-import webpack, { Configuration, Compiler } from 'webpack'
+import webpack, {
+  Configuration,
+  Compiler,
+  Entry,
+  HotModuleReplacementPlugin,
+} from 'webpack'
 import { handleStats } from '../utils/webpack'
 import Path from 'path'
 import MFS from 'memory-fs'
@@ -15,12 +20,12 @@ const memFs = new MFS()
 export class DevRenderer {
   private _clientCompiler: Compiler
   private _serverCompiler: Compiler
-  private _devMiddleware: Middleware
-  private _hotMiddleware: Middleware
+  private _devMiddleware!: Middleware
+  private _hotMiddleware!: Middleware
 
   private tpl: string | undefined
   private ssrContent: string | undefined
-  private _isBuilding: Promise<void>
+  private _isBuilding!: Promise<void>
   private buildSuccess: (() => void) | undefined
 
   private static instance: DevRenderer | undefined
@@ -32,19 +37,49 @@ export class DevRenderer {
     private clientWebpackConfig: Configuration,
     private serverWebpackConfig: Configuration
   ) {
-    this._clientCompiler = webpack(clientWebpackConfig)
+    this._clientCompiler = webpack(
+      this.createClientWebpackConfig(clientWebpackConfig)
+    )
     this._serverCompiler = webpack(serverWebpackConfig)
+
+    this.initMiddleware()
+    this.initBuildingPromise()
+    this.watchSourceCode()
+  }
+
+  createClientWebpackConfig(clientWebpackConfig: Configuration): Configuration {
+    return {
+      ...clientWebpackConfig,
+      entry: {
+        app: [
+          (clientWebpackConfig.entry as Entry).app,
+          'webpack-hot-middleware/client',
+        ],
+      } as Entry,
+      plugins: [
+        new HotModuleReplacementPlugin(),
+        ...clientWebpackConfig.plugins!,
+      ],
+    }
+  }
+
+  initMiddleware() {
     this._devMiddleware = devMiddleware(this._clientCompiler, {
       publicPath: this.clientWebpackConfig.output!.publicPath,
       noInfo: true,
     })
     this._hotMiddleware = hotMiddleware(this._clientCompiler)
+  }
 
-    // init building promise
+  // init building promise for block render
+  initBuildingPromise() {
     this._isBuilding = new Promise<void>(
       resolve => (this.buildSuccess = resolve)
     )
+  }
 
+  watchSourceCode() {
+    // pack client when accept data from hot-middleware
     this._clientCompiler.plugin('done', () => {
       try {
         this.tpl = (this._devMiddleware as any).fileSystem.readFileSync(
@@ -65,6 +100,7 @@ export class DevRenderer {
 
     const { path, filename } = this.serverWebpackConfig.output!
 
+    // pack server when source file is changed
     this._serverCompiler.outputFileSystem = memFs
     this._serverCompiler.watch({}, (err, stats) => {
       if (err) {

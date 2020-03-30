@@ -11,7 +11,7 @@ import { getConfigPath, getDistPath } from '../utils'
 export = async (): Promise<Configuration> =>
   merge(baseWebpackConfig, {
     entry: {
-      entry: Path.join(await getConfigPath(), 'server-entry.js'),
+      app: Path.join(await getConfigPath(), 'server-entry.js'),
     },
     mode: 'development',
     output: {
