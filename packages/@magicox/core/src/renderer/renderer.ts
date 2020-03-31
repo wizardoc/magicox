@@ -1,5 +1,6 @@
 import Path from 'path'
 import { getCWD } from '../utils/path'
+import { configure } from '../services'
 
 export const SERVER_ENTRY_NAME = 'server-entry.js'
 export const CLIENT_ENTRY_NAME = 'client-entry.js'
@@ -12,6 +13,12 @@ export abstract class Renderer {
     this.entryModulePath = Path.join(getCWD(), filename)
   }
 
-  abstract genEntry(): string
+  async getEntryPoint(): Promise<string> {
+    const { entryPoint } = await configure.getConfig()
+
+    return entryPoint ? `{${entryPoint} as App}` : 'App'
+  }
+
+  abstract genEntry(): Promise<string>
   abstract writeEntry(): Promise<void>
 }

@@ -16,6 +16,7 @@
     "awesome-static": "^1.4.3",
     "babel-loader": "^8.1.0",
     "babel-plugin-add-module-exports": "^1.0.2",
+    "cosmiconfig": "^6.0.0",
     "css-loader": "^3.4.2",
     "extract-text-webpack-plugin": "^3.0.2",
     "html-webpack-plugin": "^4.0.1",

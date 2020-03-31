@@ -17,6 +17,7 @@ export const baseWebpackConfig = {
             ],
           },
         },
+        exclude: /node_modules/,
       },
       {
         test: /\.(png|jpe?g|gif|svg|woff2?|eot|ttf|otf)$/,

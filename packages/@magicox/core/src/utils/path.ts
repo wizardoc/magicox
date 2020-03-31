@@ -1,6 +1,7 @@
 import FS from 'fs-extra'
 import Path from 'path'
 import { logger } from '@magicox/lib'
+import { configure } from '../services'
 
 const CONFIG_DIRECTORY_NAME = '.magicox'
 
@@ -15,7 +16,9 @@ export function getCWD() {
 }
 
 export async function getDistPath() {
-  return Path.join(await findRootPath(), 'dist')
+  const projectConfig = await configure.getConfig()
+
+  return Path.join(await findRootPath(), projectConfig.distPath)
 }
 
 // find the root path of project

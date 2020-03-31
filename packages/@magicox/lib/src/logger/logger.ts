@@ -1,4 +1,4 @@
-import * as Chalk from 'chalk'
+import Chalk from 'chalk'
 import { LoggerLevel, Level } from './logger-level'
 
 export class Logger {

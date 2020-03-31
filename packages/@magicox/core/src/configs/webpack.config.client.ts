@@ -5,9 +5,12 @@ import { baseWebpackConfig } from './webpack.config.base'
 import WebpackBar from 'webpackbar'
 import { getConfigPath, getDistPath } from '../utils'
 import { Configuration } from 'webpack'
+import { configure } from '../services'
 
-export = async (): Promise<Configuration> =>
-  merge(baseWebpackConfig, {
+export = async (): Promise<Configuration> => {
+  const { template } = await configure.getConfig()
+
+  return merge(baseWebpackConfig, {
     entry: {
       app: Path.join(await getConfigPath(), 'client-entry.js'),
     },
@@ -35,7 +38,7 @@ export = async (): Promise<Configuration> =>
     plugins: [
       new HtmlWebpackPlugin({
         filename: 'index.html',
-        template: Path.join(__dirname, '../../public/template.html'),
+        template,
       }),
       new WebpackBar({
         name: 'Client',
@@ -44,3 +47,4 @@ export = async (): Promise<Configuration> =>
       }),
     ],
   })
+}
