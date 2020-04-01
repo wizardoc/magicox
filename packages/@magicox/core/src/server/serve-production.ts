@@ -1,7 +1,7 @@
 import Koa from 'koa'
 import Router from 'koa-router'
 import Path from 'path'
-import { getDistPath } from '../utils'
+import { getDistPath } from '@magicox/lib'
 import { SERVER_ENTRY_NAME, TemplateRenderer, RenderLabel } from '../renderer'
 import Static from 'awesome-static'
 import { renderToString } from 'react-dom/server'

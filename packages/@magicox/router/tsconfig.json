@@ -10,8 +10,11 @@
     "esModuleInterop": true,
     "declaration": true,
     "jsx": "react",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "noEmit": true,
+    "skipLibCheck": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules/**"]
+  "exclude": ["node_modules", "dist"]
 }
