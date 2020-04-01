@@ -5,11 +5,11 @@
   "license": "MIT",
   "dependencies": {
     "@babel/register": "^7.9.0",
+    "@magicox/router": "^1.0.0",
     "boring-router": "^0.3.0-alpha.45",
     "fs-extra": "^9.0.0",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-router-dom": "^5.1.2"
+    "react-dom": "^16.13.1"
   },
   "devDependencies": {
     "@types/fs-extra": "^8.1.0"

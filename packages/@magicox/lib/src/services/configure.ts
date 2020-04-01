@@ -2,7 +2,7 @@ import Path from 'path'
 import { cosmiconfig } from 'cosmiconfig'
 import { CosmiconfigResult } from 'cosmiconfig/dist/types'
 import { shallowExtends } from '../shallow-extends'
-import { MagicoxRoute, Router } from '@magicox/router'
+import { MagicoxRoute, RouterService } from '@magicox/router'
 
 const MAGICOX_CONFIG_NAME = 'magicox.config'
 
@@ -73,7 +73,7 @@ export class Configure {
   async getRouter() {
     const { routes } = await this.getConfig()
 
-    return new Router(routes)
+    return new RouterService(routes)
   }
 
   async getConfig(): Promise<MagicoxConfig> {

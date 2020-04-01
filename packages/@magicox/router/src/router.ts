@@ -1,7 +1,4 @@
 import { Middleware } from './middleware'
-import { readFile } from 'fs-extra'
-import { createElement, ReactNode, ReactElement } from 'react'
-import { Route } from 'react-router-dom'
 import Path from 'path'
 import { findRootPath } from '@magicox/lib'
 
@@ -21,7 +18,7 @@ export interface MagicoxRoute {
 
 export interface ParsedMagicoxRoute extends MagicoxRoute {}
 
-export class Router {
+export class RouterService {
   private parsedRoutes: ParsedMagicoxRoute[] | undefined
   private routeComponents: string | undefined
 

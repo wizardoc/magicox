@@ -1,6 +1,5 @@
 import { Renderer, CLIENT_ENTRY_NAME } from './renderer'
 import { writeInConfig, configure } from '@magicox/lib'
-import { renderToString } from 'react-dom/server'
 
 export class ClientRenderer extends Renderer {
   async genEntry(): Promise<string> {
