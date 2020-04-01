@@ -1,6 +1,6 @@
 import FS from 'fs-extra'
 import Path from 'path'
-import { getDistPath, renderCustomLabel } from '../utils'
+import { getDistPath, renderCustomLabel } from '@magicox/lib'
 
 export class TemplateRenderer {
   static instance: TemplateRenderer

@@ -3,9 +3,8 @@ import merge from 'webpack-merge'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import { baseWebpackConfig } from './webpack.config.base'
 import WebpackBar from 'webpackbar'
-import { getConfigPath, getDistPath } from '../utils'
 import { Configuration } from 'webpack'
-import { configure } from '../services'
+import { configure, getConfigPath, getDistPath } from '@magicox/lib'
 
 export = async (): Promise<Configuration> => {
   const { template } = await configure.getConfig()
@@ -20,7 +19,7 @@ export = async (): Promise<Configuration> => {
     output: {
       path: await getDistPath(),
       filename: 'static/js/bundle.js',
-      publicPath: '/dist/', // 打包后输出路径以/dist/开头
+      publicPath: '/dist/',
     },
     module: {
       rules: [

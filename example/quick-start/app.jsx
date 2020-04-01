@@ -1,3 +1,3 @@
 import React from 'react'
 
-export default () => <div>sssello Magicox!</div>
+export const App = () => <div>sssello Magicox!</div>

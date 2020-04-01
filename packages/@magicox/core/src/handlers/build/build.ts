@@ -2,11 +2,11 @@ import { createEntry } from '../../utils'
 import webpack from 'webpack'
 import ClientWebpackConfigFactory from '../../configs/webpack.config.client'
 import ServerWebpackConfigFactory from '../../configs/webpack.config.server'
-import { webpackBuild } from '../../utils/webpack'
-import { logger } from '@magicox/lib'
+import { logger, webpackBuild, configure } from '@magicox/lib'
 import { Configuration } from 'webpack'
 
 export async function buildHandler(filename: string) {
+  configure.filename = filename
   await createEntry(filename)
 
   const ClientWebpackConfig = await ClientWebpackConfigFactory()

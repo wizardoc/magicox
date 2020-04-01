@@ -4,7 +4,7 @@ import merge from 'webpack-merge'
 import { baseWebpackConfig } from './webpack.config.base'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import WebpackBar from 'webpackbar'
-import { getConfigPath, getDistPath } from '../utils'
+import { getConfigPath, getDistPath } from '@magicox/lib'
 
 // const util from ("./util");
 

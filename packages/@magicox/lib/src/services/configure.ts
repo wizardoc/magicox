@@ -1,7 +1,8 @@
 import Path from 'path'
 import { cosmiconfig } from 'cosmiconfig'
 import { CosmiconfigResult } from 'cosmiconfig/dist/types'
-import { shallowExtends } from '../utils/shallow-extends'
+import { shallowExtends } from '../shallow-extends'
+import { MagicoxRoute, Router } from '@magicox/router'
 
 const MAGICOX_CONFIG_NAME = 'magicox.config'
 
@@ -16,12 +17,18 @@ interface MagicoxConfig {
   port: number
   template: string
   entryPoint: undefined | null | string
+  routes: MagicoxRoute[]
   dev: MagicoxDevConfig
 }
 
 export class Configure {
   private explorer: CosmiconfigExplorer<typeof cosmiconfig>
   private config: MagicoxConfig | undefined
+  private _filename: string | undefined
+
+  set filename(filename: string) {
+    this._filename = filename
+  }
 
   constructor() {
     const searchPlaces = ['package.json', `${MAGICOX_CONFIG_NAME}.js`]
@@ -30,6 +37,10 @@ export class Configure {
   }
 
   get defaultConfig(): MagicoxConfig {
+    if (!this._filename) {
+      throw new Error('The filename does not exist')
+    }
+
     return {
       distPath: '',
       port: 8080,
@@ -38,6 +49,7 @@ export class Configure {
       dev: {
         port: 8000,
       },
+      routes: [{ path: '/', component: `${this._filename}#App` }],
     }
   }
 
@@ -56,6 +68,12 @@ export class Configure {
     }
 
     return shallowExtends(result.config, this.defaultConfig)
+  }
+
+  async getRouter() {
+    const { routes } = await this.getConfig()
+
+    return new Router(routes)
   }
 
   async getConfig(): Promise<MagicoxConfig> {

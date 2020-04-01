@@ -4,16 +4,11 @@ import webpack, {
   Entry,
   HotModuleReplacementPlugin,
 } from 'webpack'
-import { handleStats } from '../utils/webpack'
 import Path from 'path'
 import MFS from 'memory-fs'
-import { renderToString } from 'react-dom/server'
 import { devMiddleware, hotMiddleware } from 'koa-webpack-middleware'
-import { logger } from '@magicox/lib'
+import { logger, handleStats } from '@magicox/lib'
 import { Middleware } from 'koa'
-import { createElement } from 'react'
-
-type BuildedListener = (tpl: string, ssrContent: string) => void
 
 const memFs = new MFS()
 
@@ -24,7 +19,7 @@ export class DevRenderer {
   private _hotMiddleware!: Middleware
 
   private tpl: string | undefined
-  private ssrContent: string | undefined
+  private router: ((location: string, context: object) => any) | undefined
   private _isBuilding!: Promise<void>
   private buildSuccess: (() => void) | undefined
 
@@ -109,7 +104,7 @@ export class DevRenderer {
         return
       }
 
-      handleStats(stats)
+      handleStats(stats as any)
 
       // read dist file in memory
       const serverDistFile = memFs.readFileSync(
@@ -120,7 +115,7 @@ export class DevRenderer {
 
       m._compile(serverDistFile, 'server-entry.js')
 
-      this.ssrContent = renderToString(createElement(m.exports.app))
+      this.router = m.exports.router
 
       logger.info('server builded!')
 
@@ -161,12 +156,12 @@ export class DevRenderer {
     return this._isBuilding
   }
 
-  buildAssets() {
-    return [this.tpl!, this.ssrContent!]
+  buildAssets(): [string, (location: string, context: object) => any] {
+    return [this.tpl!, this.router!]
   }
 
   notify() {
-    if (this.tpl && this.ssrContent && this.buildSuccess) {
+    if (this.tpl && this.router && this.buildSuccess) {
       this.buildSuccess()
     }
   }

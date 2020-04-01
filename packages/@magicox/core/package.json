@@ -13,6 +13,7 @@
     "@loadable/server": "^5.12.0",
     "@loadable/webpack-plugin": "^5.12.0",
     "@magicox/lib": "^1.0.0",
+    "@magicox/router": "^1.0.0",
     "awesome-static": "^1.4.3",
     "babel-loader": "^8.1.0",
     "babel-plugin-add-module-exports": "^1.0.2",

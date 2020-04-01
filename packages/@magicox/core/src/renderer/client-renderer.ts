@@ -1,20 +1,29 @@
 import { Renderer, CLIENT_ENTRY_NAME } from './renderer'
-import { writeInConfig } from '../utils'
+import { writeInConfig, configure } from '@magicox/lib'
+import { renderToString } from 'react-dom/server'
 
 export class ClientRenderer extends Renderer {
   async genEntry(): Promise<string> {
     const entryPointTpl = await this.getEntryPoint()
+    const [imports, body] = await (
+      await configure.getRouter()
+    ).genRouteComponents()
 
     return `
       import React from 'react'
       import {hydrate} from 'react-dom'
       import ${entryPointTpl} from '${this.entryModulePath}'
+      import {Route, BrowserRouter} from 'react-router-dom'
+      // routes
+      ${imports}
 
-      hydrate(<App />, document.getElementById('root'))
+      const Routes = () => <BrowserRouter>${body}</BrowserRouter>
+
+      hydrate(<Routes />, document.getElementById('root'))
 
       if(module.hot) {
         module.hot.accept("${this.entryModulePath}", () => {
-          hydrate(<App />, document.getElementById('root'))
+          hydrate(<Routes />, document.getElementById('root'))
         })
       }
     `

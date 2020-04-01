@@ -1,7 +1,7 @@
 import FS from 'fs-extra'
 import Path from 'path'
-import { logger } from '@magicox/lib'
-import { configure } from '../services'
+import { logger } from './logger'
+import { configure } from './services'
 
 const CONFIG_DIRECTORY_NAME = '.magicox'
 
@@ -26,7 +26,7 @@ export async function findRootPath(
   path: string | undefined = process.cwd()
 ): Promise<string> {
   if (path === '/') {
-    logger.panic('Please make sure this is a NPM pkg.')
+    logger.panic('Please make sure this pkg is a NPM pkg.')
 
     return ''
   }
@@ -41,7 +41,7 @@ export async function findRootPath(
       return path
     }
   } catch {
-    logger.panic('Please make sure this is a NPM pkg.')
+    logger.panic('Please make sure this pkg is a NPM pkg.')
   }
 
   return findRootPath(preLevelPath)
