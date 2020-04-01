@@ -15,7 +15,7 @@ export class ServerRenderer extends Renderer {
       // routes
       ${imports}
 
-      export const router = (context, location) => 
+      export const router = (location, context) => 
         <StaticRouter location={location} context={context}>${body}</StaticRouter>
     `
   }

@@ -24,7 +24,7 @@ export class RouterService {
 
   constructor(private routes: MagicoxRoute[]) {}
 
-  private async getParsedRoutes(): Promise<ParsedMagicoxRoute[]> {
+  async getParsedRoutes(): Promise<ParsedMagicoxRoute[]> {
     if (this.parsedRoutes) {
       return this.parsedRoutes
     }
@@ -53,7 +53,7 @@ export class RouterService {
     return (this.parsedRoutes = parsedRoutes)
   }
 
-  async getAliasMapping(): Promise<AliasMapping> {
+  private async getAliasMapping(): Promise<AliasMapping> {
     const rootPath = await findRootPath()
 
     return {
@@ -61,7 +61,7 @@ export class RouterService {
     }
   }
 
-  async preparePath(path: string) {
+  private async preparePath(path: string) {
     const aliases = await this.getAliasMapping()
 
     for (const alias of Object.keys(aliases)) {
@@ -97,8 +97,6 @@ export class RouterService {
         imports.push(importDeclaration)
         layoutName = name
       }
-
-      console.info('aaa')
 
       routeComponents.push(`
         <Route
