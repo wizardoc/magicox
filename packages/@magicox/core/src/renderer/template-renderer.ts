@@ -29,11 +29,28 @@ export class TemplateRenderer {
   }
 
   // replace custom label as the content
-  renderLabel(label: RenderLabel, content: string): string {
-    return renderCustomLabel(this.tpl, label, content)
+  renderLabel(label: RenderLabel, content: string): TemplateRenderer {
+    this.tpl = renderCustomLabel(this.tpl, label, content)
+
+    return this
+  }
+
+  appendScripts(scripts: string): TemplateRenderer {
+    this.tpl = renderCustomLabel(
+      this.tpl,
+      RenderLabel.SCRIPT_SLOT,
+      `<script>${scripts}</script>`
+    )
+
+    return this
+  }
+
+  get template(): string {
+    return this.tpl
   }
 }
 
 export enum RenderLabel {
   CONTENT_OUTLET = 'ssr-content-outlet',
+  SCRIPT_SLOT = 'script-slot',
 }

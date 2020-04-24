@@ -1,10 +1,19 @@
 import { Middleware } from './middleware'
 import Path from 'path'
-import { findRootPath } from '@magicox/lib'
+import { findRootPath, logger } from '@magicox/lib'
+import ShortID from 'shortid'
+import { ComponentType } from 'react'
 
 interface AliasMapping {
   [alias: string]: string
 }
+
+export interface RouteComponentMapping<T = string> {
+  path: string
+  component: T
+}
+
+export type ParsedRouteComponentMapping = RouteComponentMapping<ComponentType>
 
 export interface MagicoxRoute {
   path: string
@@ -32,12 +41,11 @@ export class RouterService {
     const parsedRoutes: ParsedMagicoxRoute[] = []
 
     for (const route of this.routes) {
-      if (!route.component) {
-        throw new Error('Component of route is undefined.')
-      }
-
-      const component = await this.preparePath(route.component)
       let attach: any = {}
+
+      if (route.component) {
+        attach.component = await this.preparePath(route.component)
+      }
 
       if (route.layout) {
         attach.layout = await this.preparePath(route.layout)
@@ -45,7 +53,6 @@ export class RouterService {
 
       parsedRoutes.push({
         ...route,
-        component,
         ...attach,
       })
     }
@@ -75,12 +82,25 @@ export class RouterService {
     return path
   }
 
-  async genRouteComponents(): Promise<[string, string]> {
+  async genRouteComponents(): Promise<
+    [string, string, RouteComponentMapping[]]
+  > {
     const routes = await this.getParsedRoutes()
     const imports = []
     const routeComponents = []
+    // component instance <-> path
+    const routeComponentMappings: RouteComponentMapping[] = []
 
-    for (const { exact, component, path, layout } of routes) {
+    for (const { exact, component, path, layout, redirect } of routes) {
+      // redirect
+      if (redirect) {
+        routeComponents.push(`
+          <Redirect exact={!!${exact}} path='${path}' to='${redirect}' />
+        `)
+
+        continue
+      }
+
       const [importDeclaration, componentName] = this.parseComponentName(
         this.parseComponent(component)
       )
@@ -91,7 +111,7 @@ export class RouterService {
       // import layout
       if (layout) {
         const [importDeclaration, name] = this.parseComponentName(
-          this.parseComponent(component)
+          this.parseComponent(layout)
         )
 
         imports.push(importDeclaration)
@@ -102,18 +122,29 @@ export class RouterService {
         <Route
           exact={!!${exact}}
           path='${path}'
-          render={() => <${layoutName}><${componentName} /></${layoutName}>}
+          render={() => <${layoutName}><${componentName} {...(() => {
+            if(process.env.server){
+              return {}
+            } else {
+              return window.__INIT_DATA__
+            }
+          })()} /></${layoutName}>}
         />
       `)
+
+      routeComponentMappings.push({ path, component: componentName })
     }
 
-    return [imports.join('\n'), routeComponents.join('\n')]
+    return [
+      imports.join('\n'),
+      routeComponents.join('\n'),
+      routeComponentMappings,
+    ]
   }
 
   private parseComponentName(info: string[]): [string, string] {
     const [importPath, entryPoint] = info
-
-    const componentName = `C_${Date.now()}`
+    const componentName = `C_${ShortID.generate().replace('-', '')}`
     const parsedEntryPoint = entryPoint
       ? `{${entryPoint} as ${componentName}}`
       : `C_${componentName}`

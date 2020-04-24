@@ -1,5 +1,5 @@
 import Path from 'path'
-import webpack, { Configuration } from 'webpack'
+import { Configuration, DefinePlugin } from 'webpack'
 import merge from 'webpack-merge'
 import { baseWebpackConfig } from './webpack.config.base'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
@@ -29,8 +29,8 @@ export = async (): Promise<Configuration> =>
       ],
     },
     plugins: [
-      new webpack.DefinePlugin({
-        'process.env.REACT_ENV': JSON.stringify('server'), // 指定React环境为服务端
+      new DefinePlugin({
+        'process.env.server': true,
       }),
       // 服务端不支持window document等对象，需将css外链
       // new MiniCssExtractPlugin({

@@ -12,7 +12,7 @@ export class ClientRenderer extends Renderer {
       import React from 'react'
       import {hydrate} from 'react-dom'
       import ${entryPointTpl} from '${this.entryModulePath}'
-      import {Route, BrowserRouter} from 'react-router-dom'
+      import {Route, BrowserRouter, Redirect} from 'react-router-dom'
       // routes
       ${imports}
 

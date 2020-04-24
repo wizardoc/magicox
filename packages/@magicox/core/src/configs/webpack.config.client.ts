@@ -3,7 +3,7 @@ import merge from 'webpack-merge'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import { baseWebpackConfig } from './webpack.config.base'
 import WebpackBar from 'webpackbar'
-import { Configuration } from 'webpack'
+import { Configuration, DefinePlugin } from 'webpack'
 import { configure, getConfigPath, getDistPath } from '@magicox/lib'
 
 export = async (): Promise<Configuration> => {
@@ -35,6 +35,9 @@ export = async (): Promise<Configuration> => {
       //   })
     },
     plugins: [
+      new DefinePlugin({
+        'process.env.client': true, // 指定React环境为服务端
+      }),
       new HtmlWebpackPlugin({
         filename: 'index.html',
         template,

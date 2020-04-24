@@ -1,7 +1,12 @@
 import webpack, { Stats, Configuration } from 'webpack'
 import { logger } from '@magicox/lib'
 
-export function webpackBuild(config: Configuration): Promise<Stats> {
+type BuildProcessor = (err: Error, stats: Stats) => void
+
+export function webpackBuild(
+  config: Configuration,
+  cb: BuildProcessor | undefined = () => {}
+): Promise<Stats> {
   return new Promise((resolve, reject) =>
     webpack(config, (err, stats) => {
       if (err) {
@@ -9,6 +14,8 @@ export function webpackBuild(config: Configuration): Promise<Stats> {
 
         return
       }
+
+      cb(err, stats)
 
       handleStats(stats)
 

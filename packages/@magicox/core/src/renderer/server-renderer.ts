@@ -4,19 +4,22 @@ import { writeInConfig, configure } from '@magicox/lib'
 export class ServerRenderer extends Renderer {
   async genEntry(): Promise<string> {
     const entryPointTpl = await this.getEntryPoint()
-    const [imports, body] = await (
-      await configure.getRouter()
-    ).genRouteComponents()
+    const router = await configure.getRouter()
+    const [imports, body, mapping] = await router.genRouteComponents()
 
     return `
       import React from 'react';
       import ${entryPointTpl} from '${this.entryModulePath}';
-      import {Route, StaticRouter} from 'react-router-dom'
+      import {Route, StaticRouter, Redirect} from 'react-router-dom'
       // routes
       ${imports}
 
       export const router = (location, context) => 
         <StaticRouter location={location} context={context}>${body}</StaticRouter>
+
+      export const routes = [${mapping.map(
+        route => `{path: '${route.path}', component: ${route.component}}`
+      )}]
     `
   }
 

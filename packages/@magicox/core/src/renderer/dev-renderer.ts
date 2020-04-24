@@ -3,12 +3,16 @@ import webpack, {
   Compiler,
   Entry,
   HotModuleReplacementPlugin,
+  Stats,
 } from 'webpack'
 import Path from 'path'
 import MFS from 'memory-fs'
 import { devMiddleware, hotMiddleware } from 'koa-webpack-middleware'
 import { logger, handleStats } from '@magicox/lib'
 import { Middleware } from 'koa'
+import { RouteComponentMapping } from '@magicox/router'
+
+type ModuleReader<T = any> = () => T
 
 const memFs = new MFS()
 
@@ -20,6 +24,7 @@ export class DevRenderer {
 
   private tpl: string | undefined
   private router: ((location: string, context: object) => any) | undefined
+  private routes: RouteComponentMapping[] | undefined
   private _isBuilding!: Promise<void>
   private buildSuccess: (() => void) | undefined
 
@@ -104,23 +109,32 @@ export class DevRenderer {
         return
       }
 
-      handleStats(stats as any)
+      handleStats(stats)
 
       // read dist file in memory
-      const serverDistFile = memFs.readFileSync(
-        Path.join(path!, filename as string),
-        'utf-8'
-      )
-      const m = new (module.constructor as any)()
-
-      m._compile(serverDistFile, 'server-entry.js')
+      const m = this.genModuleReader(filename as string, path!)()
 
       this.router = m.exports.router
+      this.routes = m.exports.routes
 
       logger.info('server builded!')
 
       this.notify()
     })
+  }
+
+  genModuleReader(filename: string, path: string): ModuleReader {
+    return () => {
+      const distFile = memFs.readFileSync(
+        Path.join(path!, filename as string),
+        'utf-8'
+      )
+      const m = new (module.constructor as any)()
+
+      m._compile(distFile, filename)
+
+      return m
+    }
   }
 
   static createInstance(
@@ -156,8 +170,12 @@ export class DevRenderer {
     return this._isBuilding
   }
 
-  buildAssets(): [string, (location: string, context: object) => any] {
-    return [this.tpl!, this.router!]
+  buildAssets(): [
+    string,
+    (location: string, context: object) => any,
+    RouteComponentMapping[]
+  ] {
+    return [this.tpl!, this.router!, this.routes!]
   }
 
   notify() {
