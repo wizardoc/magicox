@@ -1,6 +1,6 @@
 {
   "name": "@magicox/core",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "main": "dist/index.js",
   "license": "MIT",
   "dependencies": {
@@ -14,8 +14,8 @@
     "@loadable/component": "^5.12.0",
     "@loadable/server": "^5.12.0",
     "@loadable/webpack-plugin": "^5.12.0",
-    "@magicox/lib": "^1.0.0",
-    "@magicox/router": "^1.0.0",
+    "@magicox/lib": "^0.0.2",
+    "@magicox/router": "^0.0.2",
     "awesome-static": "^1.4.3",
     "babel-loader": "^8.1.0",
     "babel-plugin-add-module-exports": "^1.0.2",
