@@ -14,7 +14,7 @@ export class ServerRenderer extends Renderer {
       // routes
       ${imports}
 
-      export const router = (location, context) => 
+      export const router = (location, context, initData) => 
         <StaticRouter location={location} context={context}>${body}</StaticRouter>
 
       export const routes = [${mapping.map(

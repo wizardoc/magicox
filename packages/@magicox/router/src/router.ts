@@ -124,7 +124,7 @@ export class RouterService {
           path='${path}'
           render={() => <${layoutName}><${componentName} {...(() => {
             if(process.env.server){
-              return {}
+              return initData
             } else {
               return window.__INIT_DATA__
             }

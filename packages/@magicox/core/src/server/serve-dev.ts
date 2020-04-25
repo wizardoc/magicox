@@ -10,6 +10,7 @@ import Path from 'path'
 import { MagicoxRoute } from '@magicox/router'
 import { transformFileSync } from '@babel/core'
 import VM from 'vm'
+import { LoggerMiddleware } from './middlewares/logger-middleware'
 
 interface PageComponent {
   preFetch?(): Promise<unknown>
@@ -36,8 +37,12 @@ export async function createApp() {
 
   app.use((ctx, next) => devRenderer.hotMiddleware(ctx, next))
 
+  router.use(LoggerMiddleware)
+
   router.get('*', async ctx => {
     ctx.set('Content-Type', 'text/html')
+
+    logger.debug(ctx.path)
 
     const [tpl, routerFn, routesMapping] = devRenderer.buildAssets()
     const tplRenderer = TemplateRenderer.createRendererByTemplate(tpl)
@@ -45,13 +50,11 @@ export async function createApp() {
     const routes = await router.getParsedRoutes()
     const context = {}
 
-    const content = renderToString(routerFn(ctx.url, context))
-
-    logger.info(routesMapping)
-
     const res = await Promise.all(
-      matchRoutes(routesMapping as any, ctx.url).map(async ({ route }) => {
+      matchRoutes(routesMapping as any, ctx.path).map(async ({ route }) => {
         const { preFetch } = (route.component as unknown) as PageComponent
+
+        // logger.tip(preFetch)
 
         return preFetch ? await preFetch() : undefined
 
@@ -86,15 +89,15 @@ export async function createApp() {
       })
     )
 
-    console.info(res[0])
+    console.info(res)
 
     ctx.body = tplRenderer
+      .appendScripts(`window.__INIT_DATA__ = ${JSON.stringify(res[0])}`)
       .renderLabel(
         RenderLabel.CONTENT_OUTLET,
-        `<div id="root">${content}</div>`
-      )
-      .appendScripts(
-        `window.__INIT_DATA__ = ${JSON.stringify(res[0])}`
+        `<div id="root">${renderToString(
+          routerFn(ctx.path, context, res[0])
+        )}</div>`
       ).template
   })
 

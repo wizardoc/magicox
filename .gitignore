@@ -11,3 +11,5 @@ package-lock.json
 # logs
 yarn-error.log
 lerna-debug.log
+
+example/**/*

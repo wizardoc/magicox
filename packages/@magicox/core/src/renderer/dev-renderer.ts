@@ -13,6 +13,7 @@ import { Middleware } from 'koa'
 import { RouteComponentMapping } from '@magicox/router'
 
 type ModuleReader<T = any> = () => T
+type RouteFn = (location: string, context: object, initData: any) => any
 
 const memFs = new MFS()
 
@@ -23,7 +24,7 @@ export class DevRenderer {
   private _hotMiddleware!: Middleware
 
   private tpl: string | undefined
-  private router: ((location: string, context: object) => any) | undefined
+  private router: RouteFn | undefined
   private routes: RouteComponentMapping[] | undefined
   private _isBuilding!: Promise<void>
   private buildSuccess: (() => void) | undefined
@@ -170,11 +171,7 @@ export class DevRenderer {
     return this._isBuilding
   }
 
-  buildAssets(): [
-    string,
-    (location: string, context: object) => any,
-    RouteComponentMapping[]
-  ] {
+  buildAssets(): [string, RouteFn, RouteComponentMapping[]] {
     return [this.tpl!, this.router!, this.routes!]
   }
 

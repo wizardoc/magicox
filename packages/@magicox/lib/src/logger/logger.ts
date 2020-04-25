@@ -10,6 +10,18 @@ export class Logger {
     return this
   }
 
+  @Level(LoggerLevel.INFO)
+  request(method: string, status: number, hostname: string, path: string) {
+    const statusChalk = /^2/.test(status + '') ? Chalk.bgGreen : Chalk.bgYellow
+
+    console.info(
+      statusChalk.white(status),
+      hostname,
+      path,
+      Chalk.bgBlue.white(method)
+    )
+  }
+
   @Level(LoggerLevel.WARN)
   warn(...infos: any[]) {
     console.warn(Chalk.yellow('warning'), ...infos)
